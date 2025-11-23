@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Advisory Form | Smart Agricultural System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/assets/css/styles2.css}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-brand" onclick="window.location.href='/index'" style="cursor: pointer;">
+            <i class="fas fa-seedling"></i>
+            <span>CropSmart</span>
+        </div>
+        <div class="nav-actions">
+            <a th:href="@{/index}" class="nav-link">
+                <i class="fas fa-home"></i>
+                <span id="home-text">Home</span>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="main-container">
+    <div class="page-header">
+        <div class="header-content">
+            <div class="header-icon">
+                <i class="fas fa-seedling"></i>
+            </div>
+            <h1 id="main-title">Crop Advisory Form</h1>
+            <p id="main-subtitle">Provide your farming details for personalized crop recommendations</p>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <div class="language-selector">
+            <div class="lang-buttons">
+                <button class="lang-btn active" data-lang="en" onclick="switchLanguage('en', this)">
+                    <i class="fas fa-globe"></i>
+                    English
+                </button>
+                <button class="lang-btn" data-lang="hi" onclick="switchLanguage('hi', this)">
+                    <i class="fas fa-language"></i>
+                    हिंदी
+                </button>
+                <button class="lang-btn" data-lang="mr" onclick="switchLanguage('mr', this)">
+                    <i class="fas fa-language"></i>
+                    मराठी
+                </button>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-steps">
+                <div class="step active" data-step="1">
+                    <i class="fas fa-mountain"></i>
+                    <span id="step1-text">Soil Info</span>
+                </div>
+                <div class="step" data-step="2">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="step2-text">Season</span>
+                </div>
+                <div class="step" data-step="3">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span id="step3-text">Location</span>
+                </div>
+                <div class="step" data-step="4">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="step4-text">Complete</span>
+                </div>
+            </div>
+        </div>
+
+        <form id="cropAdvisoryForm" class="advisory-form" onsubmit="handleFormSubmit(event)">
+
+            <div id="form-en" class="form-content">
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
+                        <p>Essential details about your farming conditions</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="soil-type-en">
+                                <i class="fas fa-mountain"></i>
+                                Soil Type *
+                            </label>
+                            <select id="soil-type-en" name="soilType" required class="form-control">
+                                <option value="">Select your soil type</option>
+                                <option value="black">Black Soil (Cotton Soil) - Rich in clay, good water retention</option>
+                                <option value="alluvial">Alluvial Soil - Fertile, good for most crops</option>
+                                <option value="sandy">Sandy Soil - Well-drained, good for root vegetables</option>
+                                <option value="laterite">Laterite Soil - Rich in iron, suitable for plantation crops</option>
+                                <option value="red">Red Soil - Good for cotton, wheat, and pulses</option>
+                                <option value="clayey">Clayey Soil - High water retention, good for rice</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="season-en">
+                                <i class="fas fa-calendar-alt"></i>
+                                Cropping Season *
+                            </label>
+                            <select id="season-en" name="season" required class="form-control">
+                                <option value="">Select cropping season</option>
+                                <option value="kharif">Kharif (July-October) - Monsoon season crops</option>
+                                <option value="rabi">Rabi (November-March) - Winter season crops</option>
+                                <option value="zaid">Zaid (April-June) - Summer season crops</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="location-en">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Location *
+                            </label>
+                            <div class="input-with-action">
+                                <input type="text" id="location-en" name="location" placeholder="Enter your district/city" required class="form-control">
+                                <button type="button" class="action-btn" onclick="getCurrentLocation()" title="Get current location">
+                                    <i class="fas fa-crosshairs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="land-area-en">
+                                <i class="fas fa-ruler-combined"></i>
+                                Farm Size *
+                            </label>
+                            <select id="land-area-en" name="landArea" required class="form-control">
+                                <option value="">Select your farm size</option>
+                                <option value="1-5">Small Farm (1-5 Acres)</option>
+                                <option value="5-10">Medium Farm (5-10 Acres)</option>
+                                <option value="10-25">Large Farm (10-25 Acres)</option>
+                                <option value="25-50">Very Large Farm (25-50 Acres)</option>
+                                <option value="50+">Commercial Farm (50+ Acres)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-history"></i> Crop History</h3>
+                        <p>Information about previous and current crop cycles</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="previous-crop-en">
+                                <i class="fas fa-seedling"></i>
+                                Previous Crop *
+                            </label>
+                            <select id="previous-crop-en" name="previousCrop" required class="form-control">
+                                <option value="">Select previous crop</option>
+                                <option value="rice">Rice - Water-intensive cereal crop</option>
+                                <option value="wheat">Wheat - Winter season staple grain</option>
+                                <option value="maize">Maize/Corn - Versatile cereal crop</option>
+                                <option value="cotton">Cotton - Cash crop, fiber production</option>
+                                <option value="sugarcane">Sugarcane - Long-duration cash crop</option>
+                                <option value="soybean">Soybean - Oil seed and protein crop</option>
+                                <option value="mustard">Mustard - Oil seed crop</option>
+                                <option value="chickpea">Chickpea - Pulse crop, nitrogen fixing</option>
+                                <option value="other-pulse">Other Pulses - Lentils, black gram, etc.</option>
+                                <option value="vegetables">Vegetables - Mixed vegetable farming</option>
+                                <option value="none">No Previous Crop - Fallow land</option>
+                                <option value="other">Other Crop</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="current-crop-en">
+                                <i class="fas fa-leaf"></i>
+                                Planned/Current Crop *
+                            </label>
+                            <select id="current-crop-en" name="currentCrop" required class="form-control">
+                                <option value="">Select crop to grow</option>
+                                <option value="rice">Rice - High water requirement</option>
+                                <option value="wheat">Wheat - Moderate water requirement</option>
+                                <option value="maize">Maize/Corn - Medium water requirement</option>
+                                <option value="cotton">Cotton - Moderate water requirement</option>
+                                <option value="sugarcane">Sugarcane - Very high water requirement</option>
+                                <option value="soybean">Soybean - Low to medium water requirement</option>
+                                <option value="mustard">Mustard - Low water requirement</option>
+                                <option value="chickpea">Chickpea - Low water requirement</option>
+                                <option value="other-pulse">Other Pulses - Generally low water requirement</option>
+                                <option value="vegetables">Vegetables - Variable water requirement</option>
+                                <option value="undecided">Undecided - Need recommendations</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section optional">
+                    <div class="section-header">
+                        <h3><i class="fas fa-flask"></i> Advanced Information (Optional)</h3>
+                        <p>Additional details for more precise recommendations</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="ph-value-en">
+                                <i class="fas fa-vial"></i>
+                                Soil pH Level
+                            </label>
+                            <input type="number" id="ph-value-en" name="phValue" min="0" max="14" step="0.1" placeholder="6.5 (if known)" class="form-control">
+                            <small class="form-hint">Optimal range: 6.0-7.5 for most crops</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="irrigation-en">
+                                <i class="fas fa-tint"></i>
+                                Irrigation System
+                            </label>
+                            <select id="irrigation-en" name="irrigation" class="form-control">
+                                <option value="">Select irrigation type</option>
+                                <option value="drip">Drip Irrigation - Most efficient</option>
+                                <option value="sprinkler">Sprinkler System - Good efficiency</option>
+                                <option value="flood">Flood/Basin Irrigation - Traditional</option>
+                                <option value="furrow">Furrow Irrigation - Row crops</option>
+                                <option value="rainfed">Rain-fed - No irrigation</option>
+                                <option value="mixed">Mixed Systems</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="budget-en">
+                                <i class="fas fa-rupee-sign"></i>
+                                Investment Budget (₹)
+                            </label>
+                            <select id="budget-en" name="budget" class="form-control">
+                                <option value="">Select budget range</option>
+                                <option value="low">Low Budget (₹10,000 - ₹50,000)</option>
+                                <option value="medium">Medium Budget (₹50,000 - ₹2,00,000)</option>
+                                <option value="high">High Budget (₹2,00,000 - ₹5,00,000)</option>
+                                <option value="premium">Premium Budget (₹5,00,000+)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="experience-en">
+                                <i class="fas fa-user-graduate"></i>
+                                Farming Experience
+                            </label>
+                            <select id="experience-en" name="experience" class="form-control">
+                                <option value="">Select experience level</option>
+                                <option value="beginner">Beginner (0-2 years)</option>
+                                <option value="intermediate">Intermediate (2-10 years)</option>
+                                <option value="experienced">Experienced (10+ years)</option>
+                                <option value="expert">Expert/Commercial Farmer</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="form-hi" class="form-content hidden">
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-info-circle"></i> मुख्य जानकारी</h3>
+                        <p>आपकी खेती की स्थितियों के बारे में आवश्यक विवरण</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="soil-type-hi">
+                                <i class="fas fa-mountain"></i>
+                                मिट्टी का प्रकार *
+                            </label>
+                            <select id="soil-type-hi" name="soilType" required class="form-control">
+                                <option value="">अपनी मिट्टी का प्रकार चुनें</option>
+                                <option value="black">काली मिट्टी - मिट्टी से भरपूर, अच्छा पानी रोकने वाली</option>
+                                <option value="alluvial">जलोढ़ मिट्टी - उपजाऊ, अधिकांश फसलों के लिए अच्छी</option>
+                                <option value="sandy">बलुई मिट्टी - अच्छी जल निकासी</option>
+                                <option value="laterite">लेटेराइट मिट्टी - लोहे से भरपूर</option>
+                                <option value="red">लाल मिट्टी - कपास, गेहूं और दालों के लिए अच्छी</option>
+                                <option value="clayey">चिकनी मिट्टी - चावल के लिए अच्छी</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="season-hi">
+                                <i class="fas fa-calendar-alt"></i>
+                                फसल का मौसम *
+                            </label>
+                            <select id="season-hi" name="season" required class="form-control">
+                                <option value="">फसल का मौसम चुनें</option>
+                                <option value="kharif">खरीफ (जुलाई-अक्टूबर) - मानसून सीजन की फसलें</option>
+                                <option value="rabi">रबी (नवंबर-मार्च) - सर्दी के मौसम की फसलें</option>
+                                <option value="zaid">जायद (अप्रैल-जून) - गर्मी के मौसम की फसलें</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="location-hi">
+                                <i class="fas fa-map-marker-alt"></i>
+                                स्थान *
+                            </label>
+                            <div class="input-with-action">
+                                <input type="text" id="location-hi" name="location" placeholder="अपना जिला/शहर दर्ज करें" required class="form-control">
+                                <button type="button" class="action-btn" onclick="getCurrentLocation()" title="वर्तमान स्थान प्राप्त करें">
+                                    <i class="fas fa-crosshairs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="land-area-hi">
+                                <i class="fas fa-ruler-combined"></i>
+                                खेत का आकार *
+                            </label>
+                            <select id="land-area-hi" name="landArea" required class="form-control">
+                                <option value="">अपने खेत का आकार चुनें</option>
+                                <option value="1-5">छोटा खेत (1-5 एकड़)</option>
+                                <option value="5-10">मध्यम खेत (5-10 एकड़)</option>
+                                <option value="10-25">बड़ा खेत (10-25 एकड़)</option>
+                                <option value="25-50">बहुत बड़ा खेत (25-50 एकड़)</option>
+                                <option value="50+">वाणिज्यिक खेत (50+ एकड़)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-history"></i> फसल का इतिहास</h3>
+                        <p>पिछली और वर्तमान फसल चक्रों के बारे में जानकारी</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="previous-crop-hi">
+                                <i class="fas fa-seedling"></i>
+                                पिछली फसल *
+                            </label>
+                            <select id="previous-crop-hi" name="previousCrop" required class="form-control">
+                                <option value="">पिछली फसल चुनें</option>
+                                <option value="rice">चावल - पानी की अधिक आवश्यकता</option>
+                                <option value="wheat">गेहूं - सर्दी की मुख्य फसल</option>
+                                <option value="maize">मक्का - बहुउपयोगी फसल</option>
+                                <option value="cotton">कपास - नकदी फसल</option>
+                                <option value="sugarcane">गन्ना - लंबी अवधि की फसल</option>
+                                <option value="soybean">सोयाबीन - तेल और प्रोटीन फसल</option>
+                                <option value="mustard">सरसों - तेल की फसल</option>
+                                <option value="chickpea">चना - दलहनी फसल</option>
+                                <option value="other-pulse">अन्य दालें - मसूर, उड़द आदि</option>
+                                <option value="vegetables">सब्जियां - मिश्रित सब्जी खेती</option>
+                                <option value="none">कोई पिछली फसल नहीं</option>
+                                <option value="other">अन्य फसल</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="current-crop-hi">
+                                <i class="fas fa-leaf"></i>
+                                नियोजित/वर्तमान फसल *
+                            </label>
+                            <select id="current-crop-hi" name="currentCrop" required class="form-control">
+                                <option value="">उगाने के लिए फसल चुनें</option>
+                                <option value="rice">चावल - अधिक पानी की आवश्यकता</option>
+                                <option value="wheat">गेहूं - मध्यम पानी की आवश्यकता</option>
+                                <option value="maize">मक्का - मध्यम पानी की आवश्यकता</option>
+                                <option value="cotton">कपास - मध्यम पानी की आवश्यकता</option>
+                                <option value="sugarcane">गन्ना - बहुत अधिक पानी की आवश्यकता</option>
+                                <option value="soybean">सोयाबीन - कम से मध्यम पानी की आवश्यकता</option>
+                                <option value="mustard">सरसों - कम पानी की आवश्यकता</option>
+                                <option value="chickpea">चना - कम पानी की आवश्यकता</option>
+                                <option value="other-pulse">अन्य दालें - आम तौर पर कम पानी की आवश्यकता</option>
+                                <option value="vegetables">सब्जियां - परिवर्तनीय पानी की आवश्यकता</option>
+                                <option value="undecided">अनिश्चित - सिफारिशों की आवश्यकता</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section optional">
+                    <div class="section-header">
+                        <h3><i class="fas fa-flask"></i> उन्नत जानकारी (वैकल्पिक)</h3>
+                        <p>अधिक सटीक सिफारिशों के लिए अतिरिक्त विवरण</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="ph-value-hi">
+                                <i class="fas fa-vial"></i>
+                                मिट्टी का पीएच स्तर
+                            </label>
+                            <input type="number" id="ph-value-hi" name="phValue" min="0" max="14" step="0.1" placeholder="6.5 (यदि ज्ञात हो)" class="form-control">
+                            <small class="form-hint">अधिकांश फसलों के लिए अनुकूल सीमा: 6.0-7.5</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="irrigation-hi">
+                                <i class="fas fa-tint"></i>
+                                सिंचाई प्रणाली
+                            </label>
+                            <select id="irrigation-hi" name="irrigation" class="form-control">
+                                <option value="">सिंचाई का प्रकार चुनें</option>
+                                <option value="drip">टपक सिंचाई - सबसे कुशल</option>
+                                <option value="sprinkler">छिड़काव प्रणाली - अच्छी दक्षता</option>
+                                <option value="flood">बाढ़/बेसिन सिंचाई - पारंपरिक</option>
+                                <option value="furrow">कुंड सिंचाई - पंक्ति फसलें</option>
+                                <option value="rainfed">वर्षा आधारित - कोई सिंचाई नहीं</option>
+                                <option value="mixed">मिश्रित प्रणाली</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="budget-hi">
+                                <i class="fas fa-rupee-sign"></i>
+                                निवेश बजट (₹)
+                            </label>
+                            <select id="budget-hi" name="budget" class="form-control">
+                                <option value="">बजट सीमा चुनें</option>
+                                <option value="low">कम बजट (₹10,000 - ₹50,000)</option>
+                                <option value="medium">मध्यम बजट (₹50,000 - ₹2,00,000)</option>
+                                <option value="high">उच्च बजट (₹2,00,000 - ₹5,00,000)</option>
+                                <option value="premium">प्रीमियम बजट (₹5,00,000+)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="experience-hi">
+                                <i class="fas fa-user-graduate"></i>
+                                खेती का अनुभव
+                            </label>
+                            <select id="experience-hi" name="experience" class="form-control">
+                                <option value="">अनुभव स्तर चुनें</option>
+                                <option value="beginner">शुरुआती (0-2 वर्ष)</option>
+                                <option value="intermediate">मध्यम (2-10 वर्ष)</option>
+                                <option value="experienced">अनुभवी (10+ वर्ष)</option>
+                                <option value="expert">विशेषज्ञ/व्यावसायिक किसान</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="form-mr" class="form-content hidden">
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-info-circle"></i> मुख्य माहिती</h3>
+                        <p>तुमच्या शेतीच्या परिस्थितीबद्दल आवश्यक तपशील</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="soil-type-mr">
+                                <i class="fas fa-mountain"></i>
+                                मातीचा प्रकार *
+                            </label>
+                            <select id="soil-type-mr" name="soilType" required class="form-control">
+                                <option value="">तुमच्या मातीचा प्रकार निवडा</option>
+                                <option value="black">काळी माती - चिकणमातीने भरपूर</option>
+                                <option value="alluvial">गाळाची माती - उपजाऊ, बहुतेक पिकांसाठी चांगली</option>
+                                <option value="sandy">वाळूमय माती - चांगला पाणी निचरा</option>
+                                <option value="laterite">लेटराइट माती - लोखंडाने भरपूर</option>
+                                <option value="red">लाल माती - कापूस, गहू आणि डाळींसाठी चांगली</option>
+                                <option value="clayey">चिकणमाती - तांदळासाठी चांगली</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="season-mr">
+                                <i class="fas fa-calendar-alt"></i>
+                                पिकाचा हंगाम *
+                            </label>
+                            <select id="season-mr" name="season" required class="form-control">
+                                <option value="">पिकाचा हंगाम निवडा</option>
+                                <option value="kharif">खरीप (जुलै-ऑक्टोबर) - पावसाळी हंगामातील पिके</option>
+                                <option value="rabi">रब्बी (नोव्हेंबर-मार्च) - हिवाळी हंगामातील पिके</option>
+                                <option value="zaid">जायद (एप्रिल-जून) - उन्हाळी हंगामातील पिके</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="location-mr">
+                                <i class="fas fa-map-marker-alt"></i>
+                                स्थान *
+                            </label>
+                            <div class="input-with-action">
+                                <input type="text" id="location-mr" name="location" placeholder="तुमचा जिल्हा/शहर प्रविष्ट करा" required class="form-control">
+                                <button type="button" class="action-btn" onclick="getCurrentLocation()" title="वर्तमान स्थान मिळवा">
+                                    <i class="fas fa-crosshairs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="land-area-mr">
+                                <i class="fas fa-ruler-combined"></i>
+                                शेताचा आकार *
+                            </label>
+                            <select id="land-area-mr" name="landArea" required class="form-control">
+                                <option value="">आपल्या शेताचा आकार निवडा</option>
+                                <option value="1-5">लहान शेत (1-5 एकर)</option>
+                                <option value="5-10">मध्यम शेत (5-10 एकर)</option>
+                                <option value="10-25">मोठे शेत (10-25 एकर)</option>
+                                <option value="25-50">खूप मोठे शेत (25-50 एकर)</option>
+                                <option value="50+">व्यावसायिक शेत (50+ एकर)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-history"></i> पीक इतिहास</h3>
+                        <p>मागील आणि चालू पीक चक्राबद्दल माहिती</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="previous-crop-mr">
+                                <i class="fas fa-seedling"></i>
+                                मागील पीक *
+                            </label>
+                            <select id="previous-crop-mr" name="previousCrop" required class="form-control">
+                                <option value="">मागील पीक निवडा</option>
+                                <option value="rice">तांदूळ - पाण्याची जास्त गरज</option>
+                                <option value="wheat">गहू - हिवाळी मुख्य पीक</option>
+                                <option value="maize">मका - बहुउपयोगी पीक</option>
+                                <option value="cotton">कापूस - नकदी पीक</option>
+                                <option value="sugarcane">ऊस - दीर्घकालीन पीक</option>
+                                <option value="soybean">सोयाबीन - तेल आणि प्रथिने पीक</option>
+                                <option value="mustard">मोहरी - तेलाची पीक</option>
+                                <option value="chickpea">हरभरा - डाळी पीक</option>
+                                <option value="other-pulse">इतर डाळी - मसूर, उडीद इ.</option>
+                                <option value="vegetables">भाज्या - मिश्रित भाजी शेती</option>
+                                <option value="none">मागील पीक नाही</option>
+                                <option value="other">इतर पीक</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="current-crop-mr">
+                                <i class="fas fa-leaf"></i>
+                                नियोजित/सध्याचे पीक *
+                            </label>
+                            <select id="current-crop-mr" name="currentCrop" required class="form-control">
+                                <option value="">वाढवण्यासाठी पीक निवडा</option>
+                                <option value="rice">तांदूळ - जास्त पाण्याची गरज</option>
+                                <option value="wheat">गहू - मध्यम पाण्याची गरज</option>
+                                <option value="maize">मका - मध्यम पाण्याची गरज</option>
+                                <option value="cotton">कापूस - मध्यम पाण्याची गरज</option>
+                                <option value="sugarcane">ऊस - खूप जास्त पाण्याची गरज</option>
+                                <option value="soybean">सोयाबीन - कमी ते मध्यम पाण्याची गरज</option>
+                                <option value="mustard">मोहरी - कमी पाण्याची गरज</option>
+                                <option value="chickpea">हरभरा - कमी पाण्याची गरज</option>
+                                <option value="other-pulse">इतर डाळी - सामान्यतः कमी पाण्याची गरज</option>
+                                <option value="vegetables">भाज्या - बदलत्या पाण्याची गरज</option>
+                                <option value="undecided">अनिश्चित - शिफारशींची गरज</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section optional">
+                    <div class="section-header">
+                        <h3><i class="fas fa-flask"></i> प्रगत माहिती (ऐच्छिक)</h3>
+                        <p>अधिक अचूक शिफारसींसाठी अतिरिक्त तपशील</p>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="ph-value-mr">
+                                <i class="fas fa-vial"></i>
+                                मातीचा पीएच स्तर
+                            </label>
+                            <input type="number" id="ph-value-mr" name="phValue" min="0" max="14" step="0.1" placeholder="6.5 (माहित असल्यास)" class="form-control">
+                            <small class="form-hint">बहुतेक पिकांसाठी अनुकूल श्रेणी: 6.0-7.5</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="irrigation-mr">
+                                <i class="fas fa-tint"></i>
+                                सिंचन प्रणाली
+                            </label>
+                            <select id="irrigation-mr" name="irrigation" class="form-control">
+                                <option value="">सिंचनाचा प्रकार निवडा</option>
+                                <option value="drip">ठिबक सिंचन - सर्वात कार्यक्षम</option>
+                                <option value="sprinkler">तुषार सिंचन - चांगली कार्यक्षमता</option>
+                                <option value="flood">पूर/बेसिन सिंचन - पारंपरिक</option>
+                                <option value="furrow">कुंड सिंचन - ओळी पिके</option>
+                                <option value="rainfed">पावसावर अवलंबून - सिंचन नाही</option>
+                                <option value="mixed">मिश्र प्रणाली</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="budget-mr">
+                                <i class="fas fa-rupee-sign"></i>
+                                गुंतवणूक बजेट (₹)
+                            </label>
+                            <select id="budget-mr" name="budget" class="form-control">
+                                <option value="">बजेट श्रेणी निवडा</option>
+                                <option value="low">कमी बजेट (₹10,000 - ₹50,000)</option>
+                                <option value="medium">मध्यम बजेट (₹50,000 - ₹2,00,000)</option>
+                                <option value="high">उच्च बजेट (₹2,00,000 - ₹5,00,000)</option>
+                                <option value="premium">प्रीमियम बजेट (₹5,00,000+)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="experience-mr">
+                                <i class="fas fa-user-graduate"></i>
+                                शेतीचा अनुभव
+                            </label>
+                            <select id="experience-mr" name="experience" class="form-control">
+                                <option value="">अनुभव पातळी निवडा</option>
+                                <option value="beginner">सुरुवातीचे (0-2 वर्षे)</option>
+                                <option value="intermediate">मध्यम (2-10 वर्षे)</option>
+                                <option value="experienced">अनुभवी (10+ वर्षे)</option>
+                                <option value="expert">तज्ञ/व्यावसायिक शेतकरी</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="weather-info" class="weather-card" style="display: none;">
+                <div class="weather-header">
+                    <h3><i class="fas fa-cloud-sun"></i> <span id="weather-title">Current Weather Information</span></h3>
+                </div>
+                <div id="weather-content" class="weather-content">
+                    <div class="weather-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span id="weather-loading-text">Loading weather data...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit-section">
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <i class="fas fa-magic"></i>
+                    <span id="submit-btn-text">Get Crop Recommendations</span>
+                    <div class="btn-loader" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                </button>
+                <p class="submit-note">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="submit-note-text">Our AI will analyze your inputs and provide personalized recommendations</span>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="loading-content">
+        <div class="loading-spinner">
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+        </div>
+        <h3 id="loading-title">Analyzing Your Farm Data</h3>
+        <p id="loadingMessage">Processing your inputs...</p>
+        <div class="loading-steps">
+            <div class="loading-step active">
+                <i class="fas fa-check"></i>
+                <span id="loading-step1">Validating inputs</span>
+            </div>
+            <div class="loading-step">
+                <i class="fas fa-cloud-sun"></i>
+                <span id="loading-step2">Fetching weather data</span>
+            </div>
+            <div class="loading-step">
+                <i class="fas fa-brain"></i>
+                <span id="loading-step3">AI analysis in progress</span>
+            </div>
+            <div class="loading-step">
+                <i class="fas fa-seedling"></i>
+                <span id="loading-step4">Generating recommendations</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentLanguage = 'en';
+    let currentStep = 1;
+    let weatherData = null;
+
+    // Language switching functionality
+    function switchLanguage(lang, button) {
+        currentLanguage = lang;
+
+        // Update active button
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        // Hide all forms
+        document.querySelectorAll('.form-content').forEach(form => {
+            form.classList.add('hidden');
+        });
+
+        // Show selected language form
+        document.getElementById(`form-${lang}`).classList.remove('hidden');
+
+        // Update page texts based on language
+        updatePageTexts(lang);
+
+        // Update progress for current language
+        updateProgress();
+    }
+
+    function updatePageTexts(lang) {
+        const texts = {
+            en: {
+                mainTitle: 'Crop Advisory Form',
+                mainSubtitle: 'Provide your farming details for personalized crop recommendations',
+                homeText: 'Home',
+                step1: 'Soil Info',
+                step2: 'Season',
+                step3: 'Location',
+                step4: 'Complete',
+                weatherTitle: 'Current Weather Information',
+                weatherLoading: 'Loading weather data...',
+                submitBtn: 'Get Crop Recommendations',
+                submitNote: 'Our AI will analyze your inputs and provide personalized recommendations',
+                loadingTitle: 'Analyzing Your Farm Data',
+                loadingMessage: 'Processing your inputs...',
+                loadingStep1: 'Validating inputs',
+                loadingStep2: 'Fetching weather data',
+                loadingStep3: 'AI analysis in progress',
+                loadingStep4: 'Generating recommendations'
+            },
+            hi: {
+                mainTitle: 'फसल सलाह फॉर्म',
+                mainSubtitle: 'व्यक्तिगत फसल सिफारिशों के लिए अपनी खेती का विवरण प्रदान करें',
+                homeText: 'होम',
+                step1: 'मिट्टी की जानकारी',
+                step2: 'मौसम',
+                step3: 'स्थान',
+                step4: 'पूर्ण',
+                weatherTitle: 'वर्तमान मौसम की जानकारी',
+                weatherLoading: 'मौसम डेटा लोड हो रहा है...',
+                submitBtn: 'फसल की सिफारिशें प्राप्त करें',
+                submitNote: 'हमारा AI आपके इनपुट का विश्लेषण करेगा और व्यक्तिगत सिफारिशें प्रदान करेगा',
+                loadingTitle: 'आपके खेत के डेटा का विश्लेषण',
+                loadingMessage: 'आपके इनपुट को प्रोसेस किया जा रहा है...',
+                loadingStep1: 'इनपुट की जांच',
+                loadingStep2: 'मौसम डेटा प्राप्त करना',
+                loadingStep3: 'AI विश्लेषण प्रगति में',
+                loadingStep4: 'सिफारिशें तैयार करना'
+            },
+            mr: {
+                mainTitle: 'पीक सल्ला फॉर्म',
+                mainSubtitle: 'वैयक्तिक पीक शिफारशींसाठी तुमच्या शेतीचे तपशील द्या',
+                homeText: 'होम',
+                step1: 'मातीची माहिती',
+                step2: 'हंगाम',
+                step3: 'स्थान',
+                step4: 'पूर्ण',
+                weatherTitle: 'सध्याची हवामान माहिती',
+                weatherLoading: 'हवामान डेटा लोड होत आहे...',
+                submitBtn: 'पीक शिफारशी मिळवा',
+                submitNote: 'आमचा AI तुमच्या इनपुटचे विश्लेषण करेल आणि वैयक्तिक शिफारशी प्रदान करेल',
+                loadingTitle: 'तुमच्या शेत डेटाचे विश्लेषण',
+                loadingMessage: 'तुमचे इनपुट प्रक्रिया करत आहे...',
+                loadingStep1: 'इनपुटची तपासणी',
+                loadingStep2: 'हवामान डेटा मिळवणे',
+                loadingStep3: 'AI विश्लेषण सुरू आहे',
+                loadingStep4: 'शिफारशी तयार करत आहे'
+            }
+        };
+
+        const t = texts[lang];
+        if (t) {
+            document.getElementById('main-title').textContent = t.mainTitle;
+            document.getElementById('main-subtitle').textContent = t.mainSubtitle;
+            document.getElementById('home-text').textContent = t.homeText;
+            document.getElementById('step1-text').textContent = t.step1;
+            document.getElementById('step2-text').textContent = t.step2;
+            document.getElementById('step3-text').textContent = t.step3;
+            document.getElementById('step4-text').textContent = t.step4;
+            document.getElementById('weather-title').textContent = t.weatherTitle;
+            document.getElementById('weather-loading-text').textContent = t.weatherLoading;
+            document.getElementById('submit-btn-text').textContent = t.submitBtn;
+            document.getElementById('submit-note-text').textContent = t.submitNote;
+            document.getElementById('loading-title').textContent = t.loadingTitle;
+            document.getElementById('loadingMessage').textContent = t.loadingMessage;
+            document.getElementById('loading-step1').textContent = t.loadingStep1;
+            document.getElementById('loading-step2').textContent = t.loadingStep2;
+            document.getElementById('loading-step3').textContent = t.loadingStep3;
+            document.getElementById('loading-step4').textContent = t.loadingStep4;
+        }
+    }
+
+    // Location functionality
+    function getCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    const { latitude, longitude } = position.coords;
+                    reverseGeocode(latitude, longitude);
+                    fetchWeatherData(latitude, longitude);
+                },
+                error => {
+                    console.error('Error getting location:', error);
+                    alert('Unable to get your location. Please enter manually.');
+                }
+            );
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    }
+
+    function reverseGeocode(lat, lon) {
+        // Mock reverse geocoding - replace with actual API
+        const mockLocation = "Pune, Maharashtra";
+        const locationInput = document.getElementById(`location-${currentLanguage}`);
+        if (locationInput) {
+            locationInput.value = mockLocation;
+            updateProgress(); // Update progress when location is filled
+        }
+    }
+
+    function fetchWeatherData(lat, lon) {
+        // Mock weather data - replace with actual weather API
+        weatherData = {
+            temperature: 28,
+            humidity: 65,
+            description: "Partly cloudy",
+            windSpeed: 12,
+            rainfall: "Light rain expected in 2 days",
+            uvIndex: 6
+        };
+
+        displayWeatherInfo();
+    }
+
+    function displayWeatherInfo() {
+        const weatherCard = document.getElementById('weather-info');
+        const weatherContent = document.getElementById('weather-content');
+
+        if (weatherData) {
+            weatherContent.innerHTML = `
+                    <div class="weather-grid">
+                        <div class="weather-item">
+                            <i class="fas fa-thermometer-half"></i>
+                            <span class="weather-label">Temperature</span>
+                            <span class="weather-value">${weatherData.temperature}°C</span>
+                        </div>
+                        <div class="weather-item">
+                            <i class="fas fa-tint"></i>
+                            <span class="weather-label">Humidity</span>
+                            <span class="weather-value">${weatherData.humidity}%</span>
+                        </div>
+                        <div class="weather-item">
+                            <i class="fas fa-wind"></i>
+                            <span class="weather-label">Wind Speed</span>
+                            <span class="weather-value">${weatherData.windSpeed} km/h</span>
+                        </div>
+                        <div class="weather-item">
+                            <i class="fas fa-sun"></i>
+                            <span class="weather-label">UV Index</span>
+                            <span class="weather-value">${weatherData.uvIndex}</span>
+                        </div>
+                    </div>
+                    <div class="weather-forecast">
+                        <i class="fas fa-cloud-rain"></i>
+                        <span>${weatherData.rainfall}</span>
+                    </div>
+                `;
+            weatherCard.style.display = 'block';
+        }
+    }
+
+    // Form submission
+    function handleFormSubmit(event) {
+        event.preventDefault();
+
+        const formData = collectFormData();
+        if (validateFormData(formData)) {
+            showLoadingOverlay();
+            processFormData(formData);
+        }
+    }
+
+    function collectFormData() {
+        const suffix = currentLanguage;
+        return {
+            soilType: document.getElementById(`soil-type-${suffix}`)?.value,
+            season: document.getElementById(`season-${suffix}`)?.value,
+            location: document.getElementById(`location-${suffix}`)?.value,
+            landArea: document.getElementById(`land-area-${suffix}`)?.value,
+            previousCrop: document.getElementById(`previous-crop-${suffix}`)?.value,
+            currentCrop: document.getElementById(`current-crop-${suffix}`)?.value,
+            phValue: document.getElementById(`ph-value-${suffix}`)?.value,
+            irrigation: document.getElementById(`irrigation-${suffix}`)?.value,
+            budget: document.getElementById(`budget-${suffix}`)?.value,
+            experience: document.getElementById(`experience-${suffix}`)?.value,
+            weather: weatherData,
+            language: currentLanguage
+        };
+    }
+
+    function validateFormData(data) {
+        const required = ['soilType', 'season', 'location', 'landArea', 'previousCrop', 'currentCrop'];
+        const messages = {
+            en: 'Please fill in all required fields.',
+            hi: 'कृपया सभी आवश्यक फील्ड भरें।',
+            mr: 'कृपया सर्व आवश्यक फील्ड भरा.'
+        };
+
+        for (let field of required) {
+            if (!data[field]) {
+                alert(messages[currentLanguage] || messages.en);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function showLoadingOverlay() {
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        simulateLoadingSteps();
+    }
+
+    function simulateLoadingSteps() {
+        const steps = document.querySelectorAll('.loading-step');
+        const messages = {
+            en: [
+                'Validating your inputs...',
+                'Fetching latest weather data...',
+                'Running AI analysis...',
+                'Generating personalized recommendations...'
+            ],
+            hi: [
+                'आपके इनपुट की जांच...',
+                'नवीनतम मौसम डेटा प्राप्त करना...',
+                'AI विश्लेषण चलाया जा रहा है...',
+                'व्यक्तिगत सिफारिशें तैयार की जा रही हैं...'
+            ],
+            mr: [
+                'तुमचे इनपुट तपासत आहे...',
+                'नवीनतम हवामान डेटा मिळवत आहे...',
+                'AI विश्लेषण चालू आहे...',
+                'वैयक्तिक शिफारशी तयार करत आहे...'
+            ]
+        };
+
+        const currentMessages = messages[currentLanguage] || messages.en;
+        let currentStepIndex = 0;
+
+        const interval = setInterval(() => {
+            if (currentStepIndex < steps.length) {
+                // Activate current step
+                steps[currentStepIndex].classList.add('active');
+                document.getElementById('loadingMessage').textContent = currentMessages[currentStepIndex];
+                currentStepIndex++;
+            } else {
+                clearInterval(interval);
+                // Simulate redirect after processing
+                setTimeout(() => {
+                    // Store form data in session storage or redirect
+                    window.location.href = 'recommendations.html';
+                }, 1000);
+            }
+        }, 1500);
+    }
+
+    function processFormData(data) {
+        // Store data for recommendations page
+        try {
+            sessionStorage.setItem('farmData', JSON.stringify(data));
+        } catch (e) {
+            console.error('Error storing farm data:', e);
+        }
+    }
+
+    // Auto-detect location on page load
+    window.addEventListener('load', () => {
+        // Try to get location automatically
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    const { latitude, longitude } = position.coords;
+                    fetchWeatherData(latitude, longitude);
+                },
+                error => {
+                    console.log('Auto-location detection failed:', error);
+                }
+            );
+        }
+    });
+
+    // Update progress based on form completion
+    function updateProgress() {
+        const requiredFields = document.querySelectorAll(`#form-${currentLanguage} [required]`);
+        let filledFields = 0;
+
+        requiredFields.forEach(field => {
+            if (field.value && field.value.trim() !== '') {
+                filledFields++;
+            }
+        });
+
+        const progress = (filledFields / requiredFields.length) * 100;
+        document.getElementById('progressFill').style.width = progress + '%';
+
+        // Update step indicators
+        const steps = document.querySelectorAll('.step');
+        const stepThreshold = 25; // Each step represents 25% progress
+
+        steps.forEach((step, index) => {
+            if (progress >= (index + 1) * stepThreshold) {
+                step.classList.add('active');
+            } else {
+                step.classList.remove('active');
+            }
+        });
+
+        // Ensure first step is always active
+        if (steps.length > 0) {
+            steps[0].classList.add('active');
+        }
+    }
+
+    // Add event listeners to form fields for progress tracking
+    document.addEventListener('DOMContentLoaded', () => {
+        const forms = document.querySelectorAll('.form-content');
+        forms.forEach(form => {
+            const inputs = form.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('change', updateProgress);
+                input.addEventListener('input', updateProgress);
+            });
+        });
+
+        // Initial progress update
+        updateProgress();
+    });
+</script>
+</body>
+</html>

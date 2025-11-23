@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' | Smart Agricultural System'">Recommendations | Smart Agricultural System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/assets/css/styles.css}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand" style="text-decoration: none; color: inherit;">
+                <i class="fas fa-seedling"></i>
+                <span>CropSmart</span>
+            </a>
+            <div class="nav-actions">
+                <a href="/" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="/form" class="nav-link">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Form</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="container">
+            <div class="section-header">
+                <h1>Your Personalized Recommendations</h1>
+                <p>Based on your farm details, here are our expert recommendations to maximize your yield and sustainability.</p>
+            </div>
+
+            <div id="recommendationsContainer" class="results-container">
+                <!-- Recommendations will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get form data from session storage
+            const data = JSON.parse(sessionStorage.getItem('farmData') || '{}');
+            const container = document.getElementById('recommendationsContainer');
+            
+            // If no data found, show error message
+            if (Object.keys(data).length === 0) {
+                container.innerHTML = `
+                    <div class="alert-item info">
+                        <div class="alert-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="alert-content">
+                            <h4>No farm data found</h4>
+                            <p>We couldn't find any farm data. Please fill out the form to get personalized recommendations.</p>
+                            <a th:href="@{/form}" class="btn btn-primary">
+                                <i class="fas fa-arrow-right"></i> Go to Form
+                            </a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Generate and display recommendations
+            container.innerHTML = generateRecommendations(data);
+            
+            // Add event listeners for any interactive elements
+            initializeInteractiveElements();
+        });
+
+        /**
+         * Generates personalized recommendations based on form data
+         */
+        function generateRecommendations(data) {
+            const { soilType = 'loamy', season = 'kharif', location = 'your area', farmSize = 1 } = data;
+            
+            // Get recommendations based on soil type and season
+            const { mainCrop, alternativeCrops } = getCropRecommendations(soilType, season);
+            const { irrigationAdvice, fertilizerMix } = getManagementPractices(soilType, mainCrop);
+            const pestControl = getPestControlRecommendations(mainCrop, season);
+            const marketInfo = getMarketInformation(mainCrop);
+            
+            return `
+                <!-- Farm Summary Card -->
+                <div class="results-card">
+                    <h3><i class="fas fa-tractor"></i> Farm Summary</h3>
+                    <div class="farm-summary">
+                        <div class="summary-item">
+                            <span class="summary-label">Location:</span>
+                            <span class="summary-value">${location}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Soil Type:</span>
+                            <span class="summary-value">${formatText(soilType)}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Season:</span>
+                            <span class="summary-value">${formatText(season)}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Farm Size:</span>
+                            <span class="summary-value">${farmSize} hectares</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crop Recommendations -->
+                <div class="results-card">
+                    <h3><i class="fas fa-seedling"></i> Recommended Crops</h3>
+                    <div class="crop-recommendation">
+                        <h4>Primary Crop: <strong>${mainCrop.name}</strong></h4>
+                        <p>${mainCrop.description}</p>
+                        
+                        <div class="crop-details">
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Sowing Period: ${mainCrop.sowingPeriod}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-sun"></i>
+                                <span>Sunlight: ${mainCrop.sunlight}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-tint"></i>
+                                <span>Water Needs: ${mainCrop.waterNeeds}</span>
+                            </div>
+                        </div>
+                        
+                        ${alternativeCrops.length > 0 ? `
+                            <div class="alternative-crops">
+                                <h5>Alternative Crops:</h5>
+                                <ul class="recommendation-list">
+                                    ${alternativeCrops.map(crop => 
+                                        `<li><strong>${crop.name}</strong> - ${crop.reason}</li>`
+                                    ).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <!-- Irrigation Advice -->
+                <div class="results-card">
+                    <h3><i class="fas fa-tint"></i> Irrigation Advice</h3>
+                    <p>${irrigationAdvice.summary}</p>
+                    <ul class="recommendation-list">
+                        ${irrigationAdvice.recommendations.map(rec => 
+                            `<li>${rec}</li>`
+                        ).join('')}
+                    </ul>
+                    
+                    <div class="water-tip">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>Pro Tip:</strong> ${irrigationAdvice.tip}
+                    </div>
+                </div>
+
+                <!-- Fertilizer Recommendations -->
+                <div class="results-card">
+                    <h3><i class="fas fa-flask"></i> Fertilizer Recommendations</h3>
+                    <p>For optimal growth and yield, apply the following nutrients (per hectare):</p>
+                    <div class="fertilizer-grid">
+                        ${fertilizerMix.map(fert => `
+                            <div class="fertilizer-item">
+                                <div class="fertilizer-name">${fert.nutrient}</div>
+                                <div class="fertilizer-amount">${fert.amount}</div>
+                                <div class="fertilizer-method">${fert.method}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="fertilizer-timing">
+                        <h5>Application Schedule:</h5>
+                        <ul class="recommendation-list">
+                            <li>Basal Dose: Apply at the time of sowing</li>
+                            <li>Top Dressing: 25-30 days after sowing</li>
+                            <li>Foliar Spray: During active growth phase</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Pest and Disease Management -->
+                <div class="results-card">
+                    <h3><i class="fas fa-bug"></i> Pest & Disease Management</h3>
+                    <p>Common pests and diseases for ${mainCrop.name} in ${formatText(season)} season:</p>
+                    
+                    <div class="pest-section">
+                        <h5>Common Pests:</h5>
+                        <ul class="recommendation-list">
+                            ${pestControl.pests.map(pest => 
+                                `<li>
+                                    <strong>${pest.name}:</strong> ${pest.description}
+                                    <div class="pest-solution">
+                                        <span class="solution-label">Solution:</span> ${pest.solution}
+                                    </div>
+                                </li>`
+                            ).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="disease-section">
+                        <h5>Common Diseases:</h5>
+                        <ul class="recommendation-list">
+                            ${pestControl.diseases.map(disease => 
+                                `<li>
+                                    <strong>${disease.name}:</strong> ${disease.description}
+                                    <div class="disease-solution">
+                                        <span class="solution-label">Treatment:</span> ${disease.treatment}
+                                    </div>
+                                </li>`
+                            ).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="prevention-tips">
+                        <h5>Prevention Tips:</h5>
+                        <ul class="recommendation-list">
+                            ${pestControl.preventionTips.map(tip => 
+                                `<li>${tip}</li>`
+                            ).join('')}
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Market Information -->
+                <div class="results-card">
+                    <h3><i class="fas fa-chart-line"></i> Market Information</h3>
+                    <div class="market-info">
+                        <div class="market-price">
+                            <h5>Current Market Price:</h5>
+                            <div class="price">
+                                ₹${marketInfo.currentPrice} / quintal
+                                <span class="price-trend ${marketInfo.trend === 'up' ? 'up' : 'down'}">
+                                    <i class="fas fa-arrow-${marketInfo.trend === 'up' ? 'up' : 'down'}"></i>
+                                    ${marketInfo.change}% from last month
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="demand-forecast">
+                            <h5>Demand Forecast:</h5>
+                            <p>${marketInfo.demandForecast}</p>
+                        </div>
+                        
+                        <div class="trading-tips">
+                            <h5>Trading Tips:</h5>
+                            <ul class="recommendation-list">
+                                ${marketInfo.tradingTips.map(tip => 
+                                    `<li>${tip}</li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Resources -->
+                <div class="results-card resources-card">
+                    <h3><i class="fas fa-book"></i> Additional Resources</h3>
+                    <div class="resources-grid">
+                        <a href="#" class="resource-item">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>${mainCrop.name} Cultivation Guide</span>
+                        </a>
+                        <a href="#" class="resource-item">
+                            <i class="fas fa-video"></i>
+                            <span>Irrigation Techniques Video</span>
+                        </a>
+                        <a href="#" class="resource-item">
+                            <i class="fas fa-phone-alt"></i>
+                            <span>Contact Agriculture Expert</span>
+                        </a>
+                        <a href="#" class="resource-item">
+                            <i class="fas fa-calculator"></i>
+                            <span>Profit Calculator</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Print and Share Options -->
+                <div class="action-buttons">
+                    <button onclick="window.print()" class="btn btn-outline">
+                        <i class="fas fa-print"></i> Print Recommendations
+                    </button>
+                    <button onclick="shareRecommendations()" class="btn btn-primary">
+                        <i class="fas fa-share-alt"></i> Share with Expert
+                    </button>
+                </div>
+            `;
+        }
+
+        /**
+         * Initializes interactive elements on the page
+         */
+        function initializeInteractiveElements() {
+            // Add any interactive elements initialization here
+        }
+
+        /**
+         * Shares the recommendations via available sharing options
+         */
+        function shareRecommendations() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'My Crop Advisory Recommendations',
+                    text: 'Check out these personalized farming recommendations from CropSmart',
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                alert('Sharing is not supported in your browser. Please copy the URL manually.');
+            }
+        }
+
+        /**
+         * Gets crop recommendations based on soil type and season
+         */
+        function getCropRecommendations(soilType, season) {
+            // This is a simplified example - in a real app, this would be more sophisticated
+            const cropsBySoilAndSeason = {
+                'loamy': {
+                    'kharif': {
+                        name: 'Rice',
+                        description: 'Ideal for loamy soils during the Kharif season with good water retention.',
+                        sowingPeriod: 'June - July',
+                        sunlight: 'Full sun (6-8 hours daily)',
+                        waterNeeds: 'High (flooded fields)'
+                    },
+                    'rabi': {
+                        name: 'Wheat',
+                        description: 'Well-suited for loamy soils in the Rabi season with proper irrigation.',
+                        sowingPeriod: 'November - December',
+                        sunlight: 'Full sun (6-8 hours daily)',
+                        waterNeeds: 'Moderate'
+                    }
+                },
+                'clayey': {
+                    'kharif': {
+                        name: 'Soybean',
+                        description: 'Thrives in clayey soils during Kharif with good drainage.',
+                        sowingPeriod: 'June - July',
+                        sunlight: 'Full sun',
+                        waterNeeds: 'Moderate'
+                    },
+                    'rabi': {
+                        name: 'Chickpea (Chana)',
+                        description: 'Performs well in clayey soils during Rabi season.',
+                        sowingPeriod: 'October - November',
+                        sunlight: 'Full sun',
+                        waterNeeds: 'Low to moderate'
+                    }
+                },
+                'sandy': {
+                    'kharif': {
+                        name: 'Pearl Millet (Bajra)',
+                        description: 'Drought-resistant crop ideal for sandy soils in Kharif.',
+                        sowingPeriod: 'June - July',
+                        sunlight: 'Full sun',
+                        waterNeeds: 'Low'
+                    },
+                    'rabi': {
+                        name: 'Mustard',
+                        description: 'Suitable for sandy loam soils in Rabi season.',
+                        sowingPeriod: 'October - November',
+                        sunlight: 'Full sun',
+                        waterNeeds: 'Low to moderate'
+                    }
+                }
+            };
+
+            // Default crop if no match found
+            const defaultCrop = {
+                name: 'Maize',
+                description: 'Versatile crop suitable for various soil types and seasons.',
+                sowingPeriod: 'June - July / October - November',
+                sunlight: 'Full sun',
+                waterNeeds: 'Moderate'
+            };
+
+            // Get the main crop recommendation
+            const mainCrop = (cropsBySoilAndSeason[soilType] && cropsBySoilAndSeason[soilType][season]) || defaultCrop;
+            
+            // Get alternative crops (simplified for this example)
+            const alternativeCrops = [
+                {
+                    name: 'Pulses (Tur, Moong, Urad)',
+                    reason: 'Good for soil health and nitrogen fixation'
+                },
+                {
+                    name: 'Oilseeds (Groundnut, Sesame)',
+                    reason: 'Suitable for current season with moderate water needs'
+                }
+            ];
+
+            return { mainCrop, alternativeCrops };
+        }
+
+        /**
+         * Gets irrigation and fertilizer recommendations
+         */
+        function getManagementPractices(soilType, crop) {
+            // Simplified recommendations - in a real app, this would be more sophisticated
+            const irrigationAdvice = {
+                summary: `Optimal irrigation practices for ${crop.name} in ${soilType} soil.`,
+                recommendations: [
+                    'Maintain soil moisture at field capacity during critical growth stages',
+                    'Use drip irrigation for water efficiency',
+                    'Schedule irrigation based on soil moisture monitoring',
+                    'Avoid waterlogging, especially in heavy soils'
+                ],
+                tip: 'Consider installing a soil moisture sensor for precise irrigation management.'
+            };
+
+            const fertilizerMix = [
+                { nutrient: 'Nitrogen (N)', amount: '50-60 kg/ha', method: 'Split application' },
+                { nutrient: 'Phosphorus (P₂O₅)', amount: '30-40 kg/ha', method: 'Basal dose' },
+                { nutrient: 'Potassium (K₂O)', amount: '20-30 kg/ha', method: 'Basal dose' },
+                { nutrient: 'Farmyard Manure', amount: '5-10 tons/ha', method: 'Before sowing' },
+                { nutrient: 'Zinc Sulphate', amount: '25 kg/ha', method: 'Soil application' }
+            ];
+
+            return { irrigationAdvice, fertilizerMix };
+        }
+
+        /**
+         * Gets pest and disease control recommendations
+         */
+        function getPestControlRecommendations(crop, season) {
+            // Simplified recommendations - in a real app, this would be more comprehensive
+            return {
+                pests: [
+                    {
+                        name: 'Stem Borer',
+                        description: 'Larvae bore into stems causing dead hearts or white ears.',
+                        solution: 'Apply Cartap hydrochloride 4G @ 20 kg/ha or spray Chlorantraniliprole 18.5 SC @ 30 g/ha.'
+                    },
+                    {
+                        name: 'Leaf Folder',
+                        description: 'Larvae fold leaves and feed on green tissues.',
+                        solution: 'Spray Flubendiamide 20 WG @ 50 g/ha or Chlorantraniliprole 18.5 SC @ 30 g/ha.'
+                    }
+                ],
+                diseases: [
+                    {
+                        name: 'Blast',
+                        description: 'Leaf blast causes spindle-shaped spots with gray centers and dark margins.',
+                        treatment: 'Spray Tricyclazole 75% WP @ 0.6 g/l or Isoprothiolane 40% EC @ 1.5 ml/l.'
+                    },
+                    {
+                        name: 'Sheath Blight',
+                        description: 'Oval or irregular greenish-gray lesions on leaf sheaths.',
+                        treatment: 'Spray Validamycin 3% L @ 2.5 l/ha or Hexaconazole 5% SC @ 1 l/ha.'
+                    }
+                ],
+                preventionTips: [
+                    'Use certified disease-free seeds',
+                    'Maintain proper plant spacing for good air circulation',
+                    'Practice crop rotation with non-host crops',
+                    'Remove and destroy infected plant debris',
+                    'Monitor fields regularly for early pest/disease detection'
+                ]
+            };
+        }
+
+        /**
+         * Gets market information for the recommended crop
+         */
+        function getMarketInformation(crop) {
+            // Mock data - in a real app, this would come from an API
+            const marketData = {
+                'Rice': {
+                    currentPrice: 1850,
+                    trend: 'up',
+                    change: 2.5,
+                    demandForecast: 'Steady demand expected in domestic markets. Export demand remains strong.',
+                    tradingTips: [
+                        'Consider staggered selling to benefit from price fluctuations',
+                        'Check local mandi prices before selling',
+                        'Explore government procurement schemes if available',
+                        'Consider storage if you expect price increase in off-season'
+                    ]
+                },
+                'Wheat': {
+                    currentPrice: 2015,
+                    trend: 'down',
+                    change: 1.2,
+                    demandForecast: 'Stable demand with government procurement in full swing.',
+                    tradingTips: [
+                        'Sell in government procurement if prices are favorable',
+                        'Check moisture content before selling to avoid price cuts',
+                        'Consider value addition like flour milling for better returns',
+                        'Watch for export opportunities'
+                    ]
+                },
+                'Soybean': {
+                    currentPrice: 3950,
+                    trend: 'up',
+                    change: 3.7,
+                    demandForecast: 'Increasing demand from poultry and oil industries.',
+                    tradingTips: [
+                        'Monitor international soybean prices',
+                        'Consider forward contracts if prices are favorable',
+                        'Check local processing plant prices',
+                        'Store properly to maintain quality'
+                    ]
+                },
+                'default': {
+                    currentPrice: 2500,
+                    trend: 'stable',
+                    change: 0,
+                    demandForecast: 'Moderate demand in local markets.',
+                    tradingTips: [
+                        'Compare prices in nearby markets',
+                        'Consider collective selling with other farmers',
+                        'Explore direct-to-consumer options',
+                        'Check for government support prices'
+                    ]
+                }
+            };
+
+            return marketData[crop.name] || marketData.default;
+        }
+
+        /**
+         * Formats text to title case
+         */
+        function formatText(text) {
+            if (!text) return '';
+            return text.replace(/\w\S*/g, function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+        }
+    </script>
+</body>
+</html>

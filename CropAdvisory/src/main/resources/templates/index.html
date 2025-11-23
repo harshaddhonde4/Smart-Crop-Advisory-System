@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Crop Advisory System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/assets/css/styles.css}">
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-brand" th:onclick="'window.location.href=\'' + @{/index} + '\''" style="cursor: pointer;">
+            <i class="fas fa-seedling"></i>
+            <span>CropSmart</span>
+        </div>
+        <ul class="nav-menu">
+            <li><a th:href="@{/index}" class="nav-link active">Home</a></li>
+            <li><a th:href="@{/index + '#features'}" class="nav-link">Features</a></li>
+            <li><a th:href="@{/index + '#dashboard'}" class="nav-link">Dashboard</a></li>
+            <li><a th:href="@{/index + '#contact'}" class="nav-link">Contact</a></li>
+        </ul>
+        <div class="nav-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section id="home" class="hero">
+    <div class="hero-container">
+        <div class="hero-content">
+            <h1 class="hero-title">Smart Agriculture Solutions</h1>
+            <p class="hero-subtitle">Empowering farmers with AI-driven crop advisory, pest detection, and precision farming recommendations</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="showDashboard()">
+                    <i class="fas fa-chart-line"></i>
+                    Get Started
+                </button>
+                <button class="btn btn-secondary" onclick="scrollToFeatures()">
+                    <i class="fas fa-info-circle"></i>
+                    Learn More
+                </button>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-cards">
+                <div class="floating-card">
+                    <i class="fas fa-leaf"></i>
+                    <span>Crop Health</span>
+                </div>
+                <div class="floating-card">
+                    <i class="fas fa-bug"></i>
+                    <span>Pest Detection</span>
+                </div>
+                <div class="floating-card">
+                    <i class="fas fa-tint"></i>
+                    <span>Water Advisory</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="features">
+    <div class="container">
+        <div class="section-header">
+            <h2>Our Services</h2>
+            <p>Comprehensive agricultural solutions powered by advanced AI technology</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card" onclick="openCropAdvisory()">
+                <div class="feature-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h3>Crop Advisory</h3>
+                <p>Get personalized crop recommendations based on soil type, climate, and seasonal conditions</p>
+                <a th:href="@{/form}" class="feature-btn" style="text-decoration: none;">Try Now</a>
+            </div>
+            <div class="feature-card" onclick="openPestDetection()">
+                <div class="feature-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>Pest Detection</h3>
+                <p>Upload crop images for instant AI-powered pest and disease identification with treatment suggestions</p>
+                <button class="feature-btn">Scan Image</button>
+            </div>
+            <div class="feature-card" onclick="openFertilizerAdvisory()">
+                <div class="feature-icon">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <h3>Fertilizer Advisory</h3>
+                <p>Optimize your fertilizer usage with precise NPK recommendations and application schedules</p>
+                <button class="feature-btn">Get Advice</button>
+            </div>
+            <div class="feature-card" onclick="openWeatherAlerts()">
+                <div class="feature-icon">
+                    <i class="fas fa-cloud-sun"></i>
+                </div>
+                <h3>Weather Alerts</h3>
+                <p>Receive real-time weather updates and agricultural alerts to protect your crops</p>
+                <button class="feature-btn">View Alerts</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Dashboard Section -->
+<section id="dashboard" class="dashboard" style="display: none;">
+    <div class="container">
+        <div class="dashboard-header">
+            <h2>Farm Dashboard</h2>
+            <div class="dashboard-controls">
+                <button class="btn btn-outline" onclick="showHome()">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Home
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Farm Health</h3>
+                    <div class="stat-value">92%</div>
+                    <span class="stat-change positive">+5% this week</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-bug"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Pest Alerts</h3>
+                    <div class="stat-value">3</div>
+                    <span class="stat-change neutral">Active warnings</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-tint"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Water Usage</h3>
+                    <div class="stat-value">87%</div>
+                    <span class="stat-change negative">-12% vs target</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Cost Savings</h3>
+                    <div class="stat-value">₹15,240</div>
+                    <span class="stat-change positive">This month</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h3>Quick Actions</h3>
+            <div class="action-grid">
+                <button class="action-card" onclick="openCropAdvisory()">
+                    <i class="fas fa-seedling"></i>
+                    <span>New Crop Advisory</span>
+                </button>
+                <button class="action-card" onclick="openPestDetection()">
+                    <i class="fas fa-camera"></i>
+                    <span>Scan for Pests</span>
+                </button>
+                <button class="action-card" onclick="openFertilizerAdvisory()">
+                    <i class="fas fa-flask"></i>
+                    <span>Fertilizer Plan</span>
+                </button>
+                <button class="action-card" onclick="openWeatherAlerts()">
+                    <i class="fas fa-bell"></i>
+                    <span>Check Alerts</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Crop Advisory Modal -->
+<div id="cropAdvisoryModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Crop Advisory</h2>
+            <span class="close" onclick="closeModal('cropAdvisoryModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form class="advisory-form">
+                <div class="form-group">
+                    <label for="soilType">Soil Type</label>
+                    <select id="soilType" class="form-control">
+                        <option value="">Select Soil Type</option>
+                        <option value="clay">Clay</option>
+                        <option value="sandy">Sandy</option>
+                        <option value="loam">Loam</option>
+                        <option value="silt">Silt</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="season">Season</label>
+                    <select id="season" class="form-control">
+                        <option value="">Select Season</option>
+                        <option value="kharif">Kharif (Monsoon)</option>
+                        <option value="rabi">Rabi (Winter)</option>
+                        <option value="summer">Summer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" class="form-control" placeholder="Enter your location">
+                </div>
+                <div class="form-group">
+                    <label for="farmSize">Farm Size (acres)</label>
+                    <input type="number" id="farmSize" class="form-control" placeholder="Enter farm size">
+                </div>
+                <button type="button" class="btn btn-primary full-width" onclick="getCropRecommendation()">
+                    <i class="fas fa-magic"></i>
+                    Get Recommendations
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Pest Detection Modal -->
+<div id="pestDetectionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Pest Detection</h2>
+            <span class="close" onclick="closeModal('pestDetectionModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Upload Crop Image</h3>
+                    <p>Drag and drop your image here or click to browse</p>
+                    <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                    <button type="button" class="btn btn-outline" onclick="document.getElementById('imageUpload').click()">
+                        Choose File
+                    </button>
+                </div>
+                <div class="image-preview" id="imagePreview" style="display: none;">
+                    <img id="previewImg" src="" alt="Preview">
+                    <button type="button" class="btn btn-primary" onclick="analyzePest()">
+                        <i class="fas fa-search"></i>
+                        Analyze Image
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fertilizer Advisory Modal -->
+<div id="fertilizerModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Fertilizer Advisory</h2>
+            <span class="close" onclick="closeModal('fertilizerModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form class="fertilizer-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cropType">Crop Type</label>
+                        <select id="cropType" class="form-control">
+                            <option value="">Select Crop</option>
+                            <option value="rice">Rice</option>
+                            <option value="wheat">Wheat</option>
+                            <option value="corn">Corn</option>
+                            <option value="cotton">Cotton</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="growthStage">Growth Stage</label>
+                        <select id="growthStage" class="form-control">
+                            <option value="">Select Stage</option>
+                            <option value="seedling">Seedling</option>
+                            <option value="vegetative">Vegetative</option>
+                            <option value="flowering">Flowering</option>
+                            <option value="maturity">Maturity</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="nutrient-inputs">
+                    <h4>Soil Nutrient Levels</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nitrogen">Nitrogen (N)</label>
+                            <input type="number" id="nitrogen" class="form-control" placeholder="ppm">
+                        </div>
+                        <div class="form-group">
+                            <label for="phosphorus">Phosphorus (P)</label>
+                            <input type="number" id="phosphorus" class="form-control" placeholder="ppm">
+                        </div>
+                        <div class="form-group">
+                            <label for="potassium">Potassium (K)</label>
+                            <input type="number" id="potassium" class="form-control" placeholder="ppm">
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary full-width" onclick="getFertilizerRecommendation()">
+                    <i class="fas fa-calculator"></i>
+                    Calculate Fertilizer
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Weather Alerts Modal -->
+<div id="weatherModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Weather Alerts & Notifications</h2>
+            <span class="close" onclick="closeModal('weatherModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="alert-list">
+                <div class="alert-item urgent">
+                    <div class="alert-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h4>Heavy Rain Warning</h4>
+                        <p>Expected rainfall: 50-75mm in next 24 hours. Secure loose materials and ensure drainage.</p>
+                        <span class="alert-time">2 hours ago</span>
+                    </div>
+                </div>
+                <div class="alert-item warning">
+                    <div class="alert-icon">
+                        <i class="fas fa-bug"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h4>Pest Activity Alert</h4>
+                        <p>Increased aphid activity reported in your area. Consider preventive spraying.</p>
+                        <span class="alert-time">5 hours ago</span>
+                    </div>
+                </div>
+                <div class="alert-item info">
+                    <div class="alert-icon">
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h4>Temperature Advisory</h4>
+                        <p>Optimal conditions for wheat sowing. Temperature range: 18-22°C for next week.</p>
+                        <span class="alert-time">1 day ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results Modal -->
+<div id="resultsModal" class="modal">
+    <div class="modal-content large">
+        <div class="modal-header">
+            <h2 id="resultsTitle">Analysis Results</h2>
+            <span class="close" onclick="closeModal('resultsModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div id="resultsContent">
+                <!-- Results will be populated here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/assets/js/script.js}"></script>
+</body>
+</html>
